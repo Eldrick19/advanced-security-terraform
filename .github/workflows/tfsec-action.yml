@@ -22,10 +22,19 @@ jobs:
       - name: Run tfsec
         uses: aquasecurity/tfsec-sarif-action@v0.1.0
         with:
-          sarif_file: tfsec.sarif         
-
-      - name: Upload SARIF file
-        uses: github/codeql-action/upload-sarif@v2
+          sarif_file: tfsec.sarif     
+      
+      - name: GitHub Security Report Action
+        uses: peter-murray/github-security-report-action@v2
         with:
-          # Path to SARIF file relative to the root of the repository
-          sarif_file: tfsec.sarif  
+          token: ${{ secrets.SECURITY_REPORT_BOT_TOKEN }}
+          sarifReportDir: ${{ github.workspace }}
+      
+      - name: ls output dir
+        run: ls -la ${{ github.workspace }}
+
+      - name: Upload security report
+        uses: actions/upload-artifact@v2
+        with:
+          name: SecuritySummary
+          path: ${{ github.workspace }}/summary.pdf
